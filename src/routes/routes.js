@@ -3,11 +3,13 @@ const router = express.Router();
 
 const bookController = require("../controllers/bookController");
 const userController = require("../controllers/userController");
+const reviewController = require("../controllers/reviewController");
 const middlewares = require("../middlewares/auth");
 
 let { createUser, userLogin } = userController;
 let { createBook, getBooks, getBooksById, updateBook, deleteBook } =
   bookController;
+  let {createreview } = reviewController;
 let { authenticate, authorise } = middlewares;
 
 // ==========> Create User Api <=============
@@ -30,6 +32,10 @@ router.put("/books/:bookId", authenticate,authorise, updateBook);
 
 // ===========> Delete Books Api <=============
 router.delete("/books/:bookId", authenticate, authorise, deleteBook);
+
+// ===========> reviews Api <=============
+// ===========> Create reviewe Api <=============
+router.post("/books/:bookId/review",  createreview);
 
 // ==========> This API is used for handling any invalid Endpoints <=========== 
   router.all("/*", async function (req, res) {

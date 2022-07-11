@@ -86,9 +86,15 @@ let userId = req.query.userId
       //if(fetchuserId != validAuthor){ return res.status(403).send({msg : "you are not authorized toaccess the data!! "})}
     
       //<---------Checking Book Exist or not--------->//
+      // let filter = fetchuserId.userId.toString()
+      //  console.log("filter",fetchuserId);   // if(filter == validAuthor){
+      //   req.varifieduser = filter;
+      //     return next();
+      // }
       if(fetchuserId != null)
       {
         req.varifieduser = fetchuserId.userId;
+        
    
         return next();
       }

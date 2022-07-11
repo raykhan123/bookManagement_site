@@ -2,7 +2,7 @@ const bookModel = require("../models/bookModel");
 const userModel = require("../models/userModel");
 const validation = require("../validator/validator");
 const reviewModel = require("../models/reviewModel");
-
+const mongoose = require("mongoose")
 
 let { isEmpty, isValidObjectId, isValidISBN, isValidExcerpt, isValidName } =
   validation;
@@ -100,16 +100,19 @@ const getBooks = async (req, res) => {
 
     //<------Acquiring UserId from Decoded Token------->//
     let validAuthorId = req.tokenId;
-    
+    // let filter = req.varifieduser.toString()
+    // console.log(filter,validAuthorId);
 
     if (Object.keys(req.query) == 0) {
       let blog = await bookModel.find({ userId: validAuthorId, isDeleted: false })
-      if (blog.length == 0) return res.status(404).send({ status: false, msg: "No Blog Found!!!" })
+      if (blog.length == 0) return res.status(404).send({ status: false, msg: "No Book Found!!!" })
       return res.status(200).send({ status: true, msg: blog })
     }
 
     let { userId, category, subcategory } = req.query;
-    let Objectid =isValidObjectId(userId)
+    //let Objectid =isValidObjectId(userId)  
+    let Objectid = mongoose.Types.ObjectId(userId)
+
 
     let addObj = { isDeleted: false}
     addObj.userId = validAuthorId;
@@ -126,6 +129,7 @@ const getBooks = async (req, res) => {
     if (subcategory) {
       addObj.subcategory = subcategory
     }
+ 
     let showData = {
             _id: 1,
             title: 1,
@@ -135,6 +139,7 @@ const getBooks = async (req, res) => {
             reviews: 1,
             releasedAt: 1,
           };
+          console.log(addObj);
     let book = await bookModel.find(addObj).select(showData) .sort({ title: 1 });
 
     if (book.length == 0) return res.status(404).send({ status: false, msg: "Book Not Found." })
@@ -151,7 +156,7 @@ module.exports.getBooks = getBooks;
 const getBooksById = async function (req, res) {
   try {
     const bookId = req.params.bookId;
-
+console.log(bookId);
     if (!isValidObjectId(bookId)) {
       return res.status(404).send({
         status: false,
@@ -286,7 +291,7 @@ const deleteBook = async function (req, res) {
 
     let checkBook = await bookModel.findOneAndUpdate(
       { _id: obj.bookId, isDeleted: false },
-      { $set: dataObj },
+      { $set: dataObj,deletedAt:Date.now()},
       { new: true }
     );
     if (!checkBook)
