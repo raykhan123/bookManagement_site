@@ -9,33 +9,43 @@ const middlewares = require("../middlewares/auth");
 let { createUser, userLogin } = userController;
 let { createBook, getBooks, getBooksById, updateBook, deleteBook } =
   bookController;
-  let {createreview } = reviewController;
+
+let {createReview, updateReview, deleteReview } = reviewController;
 let { authenticate, authorise } = middlewares;
 
 // ==========> Create User Api <=============
 router.post("/register", createUser);
 
-// ===========> Login User Api <=============
+// ==========> Login User Api <=============
 router.post("/login", userLogin);
 
-// ===========> Create Books Api <=============
-router.post("/books", authenticate, createBook);
+// ==========> Create Books Api <=============
+router.post("/books", authenticate, authorise ,createBook);
 
-// =============> Get Books Api <============
-router.get("/books", authenticate,authorise,getBooks);
+// ==========> Get Books Api <============
+router.get("/books", authenticate, authorise ,getBooks);
 
-// =============> Get Books By Id <============
-router.get("/books/:bookId", authenticate,authorise, getBooksById);
+// ==========> Get Books By Id <============
+router.get("/books/:bookId", authenticate, authorise, getBooksById);
 
-// ===========> Update Books Api <=============
-router.put("/books/:bookId", authenticate,authorise, updateBook);
+// ==========> Update Books Api <=============
+router.put("/books/:bookId", authenticate, authorise, updateBook);
 
-// ===========> Delete Books Api <=============
+// ==========> Delete Books Api <=============
 router.delete("/books/:bookId", authenticate, authorise, deleteBook);
+
 
 // ===========> reviews Api <=============
 // ===========> Create reviewe Api <=============
-router.post("/books/:bookId/review",  createreview);
+router.post("/books/:bookId/review",  createReview);
+
+// ==========> Update Review Api <============
+router.put("/books/:bookId/reviews/:reviewId", updateReview);
+
+// ==========> Delete Review Api <============
+router.delete("/books/:bookId/reviews/:reviewId", deleteReview);
+
+
 
 // ==========> This API is used for handling any invalid Endpoints <=========== 
   router.all("/*", async function (req, res) {

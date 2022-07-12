@@ -135,7 +135,9 @@ const userLogin = async function (req, res) {
       .send({
         status: true,
         message: "User Login Succesful",
-        data: {getUserData:getUserData._id, token:token },
+
+        data: { userId: getUsersData._id, token: token },
+
       });
     console.log(token);
   } catch (err) {

@@ -8,7 +8,7 @@ const isValidTitle = (title) => {
 
 //Name Validation
 const isValidName = function (name) {
-  const nameRegex = /^[a-zA-Z ]+$/;
+  const nameRegex = /^[a-zA-Z .]+$/;
   return nameRegex.test(name);
 };
 
@@ -62,6 +62,11 @@ const isValidExcerpt = (excerpt) => {
     return excerptRegex.test(excerpt);
 }
 
+const isValidDate = (date) => {
+  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+  return dateRegex.test(date);
+}
+
 module.exports = {
   isEmpty,
   isValidName,
@@ -73,4 +78,5 @@ module.exports = {
   isValidISBN,
   isValidObjectId,
   isValidExcerpt,
+  isValidDate
 };
