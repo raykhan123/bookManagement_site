@@ -67,6 +67,10 @@ const isValidDate = (date) => {
   return dateRegex.test(date);
 }
 
+const isValid = function (data) {
+  if (typeof data !== "undefined" || data !== null) return true;
+};
+
 module.exports = {
   isEmpty,
   isValidName,
@@ -78,5 +82,6 @@ module.exports = {
   isValidISBN,
   isValidObjectId,
   isValidExcerpt,
-  isValidDate
+  isValidDate,
+  isValid
 };

@@ -27,19 +27,27 @@ const createReview = async function (req, res) {
         .status(404)
         .send({ status: false, message: "Book is not available" });
     }
+    let data = req.body;
     if (Object.keys(data).length == 0) {
       return res
         .status(400)
         .send({ status: false, msg: "All fields are mandatory!" });
     }
-    let data = req.body
-    let {  reviewedBy, rating,review } = data;
-    // if(!isEmpty(rating)) {
-    //   return res.status(400).send({ status: false, msg: ""})
-    //}
-    if (!reviewedBy) {
-      reviewedBy  = "Guest"
+    let { rating, reviewedBy, review } = data;
+    if(!isEmpty(rating)) {
+      return res.status(400).send({ status: false, msg: "Please provide valid rating between 1 and 5 only"})
     }
+    if (rating) {
+      if (!(rating >= 1 && rating <= 5)) {
+        return res
+          .status(400)
+          .send({
+            status: false,
+            message: "Please provide valid rating between 1 and 5 only",
+          });
+      }
+    }
+    if (reviewedBy) {
       if (!isEmpty(reviewedBy)) {
         return res
           .status(400)
@@ -53,32 +61,7 @@ const createReview = async function (req, res) {
             message: "Provide a valid Name(only alphabets allowed",
           });
       }
-    
-    if (rating) {
-      if (!(rating >= 1 && rating <= 5)) {
-        return res
-          .status(400)
-          .send({
-            status: false,
-            message: "Please provide valid rating between 1 and 5 only",
-          });
-      }
     }
-    // if (reviewedBy) {
-    //   if (!isEmpty(reviewedBy)) {
-    //     return res
-    //       .status(400)
-    //       .send({ status: false, message: "Reviewed Name must be present" });
-    //   }
-    //   if (!isValidName(reviewedBy)) {
-    //     return res
-    //       .status(400)
-    //       .send({
-    //         status: false,
-    //         message: "Provide a valid Name(only alphabets allowed",
-    //       });
-    //   }
-    // }
     if (!isValidName(review)) {
       return res
         .status(400)
@@ -139,12 +122,11 @@ const updateReview = async (req, res) => {
         .send({ status: false, message: "All fields are menditory" });
     }
 
-
-    let checkBook = await bookModel.findOne({_id: bookId, isDeleted: false})
-    console.log("checkbook",checkBook);
-    if(!checkBook) {
-      return res.status(404).send({ status: false, message: "Provide a valid bookId"})
-
+    let checkBook = await bookModel.findOne({ _id: bookId, isDeleted: false });
+    if (!checkBook) {
+      return res
+        .status(404)
+        .send({ status: false, message: "Provide a valid bookId" });
     }
     let checkReview = await reviewModel.findOne({
       _id: reviewId,
@@ -157,7 +139,7 @@ const updateReview = async (req, res) => {
     }
     let { review, reviewedBy, rating } = data;
     if (rating) {
-      if (!(rating >= 1 && rating <= 5)) {
+      if (!(rating >0 && rating <= 5)) {
         return res
           .status(400)
           .send({
@@ -174,15 +156,8 @@ const updateReview = async (req, res) => {
           message: "Provide a valid name(only alphabets allowed)",
         });
     }
-    if (rating) {
-      return res
-        .status(400)
-        .send({
-          status: false,
-          message: "Please provide valid rating between 1 and 5 only",
-        });
-    }
-    if (review) {
+   
+   if(!isValidName(review)) {
       return res
         .status(400)
         .send({ status: false, message: "Please provide a valid review" });
@@ -204,6 +179,7 @@ const updateReview = async (req, res) => {
     return res.status(500).send({ status: false, message: err.message });
   }
 };
+
 
 // =========> Delete Api <=============
 const deleteReview = async function (req, res) {

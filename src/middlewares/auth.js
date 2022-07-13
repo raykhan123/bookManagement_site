@@ -8,12 +8,19 @@ const authenticate = function (req, res, next) {
   try {
     let token = req.headers['x-api-key'];
     if (!token)
-      return res.status(400).send({ status: false, msg: 'TOKEN MUST BE PRESENT' });
+      {return res.status(400).send({ status: false, msg: 'TOKEN MUST BE PRESENT' });}
      decodedToken = jwt.verify(token, 'group-39');
-    if (!decodedToken)
-      return res.status(401).send({ status: false, msg: 'TOKEN  IS NOT VALID' });
+     if (decodedToken) {
       req.tokenId = decodedToken.userId;
-    next();
+      next();
+  } 
+
+      return res.status(400).send({ status: false, message: 'Oops...token is not valid' })
+  
+    // if (!decodedToken)
+    //  {return res.status(401).send({ status: false, msg: 'TOKEN  IS NOT VALID' });}
+    //   req.tokenId = decodedToken.userId;
+    // next();
   } catch (err) {
     res.status(500).send({ Status: 'SERVER ERROR', Msg: err.message });
   }
