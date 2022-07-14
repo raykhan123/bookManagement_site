@@ -229,13 +229,6 @@ const updateBook = async function (req, res) {
         .status(400)
         .send({ status: false, msg: "All fields are mandatory!" });
     }
-    let checkTitle = await bookModel.findOne({ title: title });
-    if (checkTitle) {
-      return res.status(400).send({
-        status: false,
-        message: "title is already exists please provide unique title",
-      });
-    }
     if (title) {
       if (!isValidName(title)) {
         return res.status(400).send({
@@ -244,11 +237,27 @@ const updateBook = async function (req, res) {
         });
       }
     }
+    let checkTitle = await bookModel.findOne({ title: title });
+    if (checkTitle) {
+      return res.status(400).send({
+        status: false,
+        message: "title is already exists please provide unique title",
+      });
+    }
+    
     if (excerpt) {
       if (!isValidExcerpt(excerpt)) {
         return res.status(400).send({
           status: false,
           message: "excerpt should be in alphabatical order",
+        });
+      }
+    }
+    if (ISBN) {
+      if (!isValidISBN(ISBN)) {
+        return res.status(400).send({
+          status: false,
+          message: "ISBN should follow 10 to 13 digit numbers only",
         });
       }
     }
@@ -259,14 +268,7 @@ const updateBook = async function (req, res) {
         message: "ISBN already exists please provide unique ISBN",
       });
     }
-    if (ISBN) {
-      if (!isValidISBN(ISBN)) {
-        return res.status(400).send({
-          status: false,
-          message: "ISBN should follow 10 to 13 digit numbers only",
-        });
-      }
-    }
+   
 
     if (releasedAt) {
       if (!isValidDate(releasedAt)) {
@@ -311,7 +313,7 @@ const deleteBook = async function (req, res) {
       { $set: dataObj,deletedAt:Date.now()},
       { new: true }
     );
-    if (!isValidObjectId(checkBook))
+    if (!checkBook)
       return res.status(404).send({ status: false, msg: "No Books Found" });
 
     res.status(200).send({
